@@ -6,10 +6,12 @@ import unirest
 from twilio.rest import Client
 
 # Creating an instance of the Bittrex class with our secrets.json file
-with open("secrets.json") as secrets_file:
-    secrets = json.load(secrets_file)
-    secrets_file.close()
-    my_bittrex = Bittrex(secrets['bittrex_key'], secrets['bittrex_secret'])
+# with open("secrets.json") as secrets_file:
+#     secrets = json.load(secrets_file)
+#     secrets_file.close()
+bittrex_key = os.getenv('BITTREX_KEY', '')
+bittrex_secret = os.getenv('BITTREX_SECRET', '')
+my_bittrex = Bittrex(bittrex_key, bittrex_secret)
 
 # Setting up Twilio for SMS alerts
 # account_sid = secrets['twilio_key']
