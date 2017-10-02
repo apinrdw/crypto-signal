@@ -1,6 +1,14 @@
+import os
 from redis import Redis
-from rq import Queue
-from app import loop_script
+from rq import Worker, Queue, Connection
 
-q = Queue(connection=Redis())
-result = q.enqueue(loop_script)
+listen = ['high', 'default', 'low']
+
+redis_url = os.getenv('REDISCLOUD_URL', 'redis://localhost:6379')
+
+conn = Redis.from_url(redis_url)
+
+if __name__ == '__main__':
+    with Connection(conn):
+        worker = Worker(map(Queue, listen))
+        worker.work()

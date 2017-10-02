@@ -156,8 +156,9 @@ def loop_script():
     for i in coin_pairs:
         breakout = findBreakout(coin_pair=i, period=5, unit="fiveMin")
         rsi = calculateRSI(coin_pair=i, period=14, unit="thirtyMin")
-        if (rsi >= 70.0 or rsi <= 30):
-            print("{}: \tBreakout: {} \tRSI: {}".format(i, breakout, rsi))
+        print("{}: \tBreakout: {} \tRSI: {}".format(i, breakout, rsi))
+
+        if (rsi >= 70.0 or rsi <= 30.0):
             unirest.post("https://coinwatch-demo.herokuapp.com/alert", params={
                 "type": "RSI",
                 "value": rsi,
@@ -165,6 +166,3 @@ def loop_script():
             }, callback=webhookCallback)
         else:
             print("No Webhook")
-    time.sleep(1)
-    loop_script()
-    
