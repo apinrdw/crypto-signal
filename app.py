@@ -2,6 +2,7 @@ from bittrex import Bittrex
 import json
 import time
 import os
+import unirest
 from twilio.rest import Client
 
 # Creating an instance of the Bittrex class with our secrets.json file
@@ -11,15 +12,15 @@ with open("secrets.json") as secrets_file:
     my_bittrex = Bittrex(secrets['bittrex_key'], secrets['bittrex_secret'])
 
 # Setting up Twilio for SMS alerts
-account_sid = secrets['twilio_key']
-auth_token = secrets['twilio_secret']
-client = Client(account_sid, auth_token)
+# account_sid = secrets['twilio_key']
+# auth_token = secrets['twilio_secret']
+# client = Client(account_sid, auth_token)
 
 
 # Let's test an API call to get our BTC balance as a test
 # print(my_bittrex.get_balance('BTC')['result']['Balance'])
 
-coin_pairs = ['BTC-ETH', 'BTC-OMG', 'BTC-GNT', 'BTC-CVC', 'BTC-BAT', 'BTC-STRAT', 'BTC-LSK', 'BTC-BCC', 'BTC-NEO', 'BTC-OK', 'BTC-TRIG', 'BTC-PAY', 'BTC-XMR']
+coin_pairs = ['BTC-ETH']
 
 #print(historical_data = my_bittrex.getHistoricalData('BTC-ETH', 30, "thirtyMin"))
 def getClosingPrices(coin_pair, period, unit):
@@ -146,13 +147,24 @@ def findBreakout(coin_pair, period, unit):
     else:
         return "#Bagholding"
 
+def webhookCallback(response):
+    print(response.code)
+    print(response.body)
 
 if __name__ == "__main__":
     def loop_script():
         for i in coin_pairs:
             breakout = findBreakout(coin_pair=i, period=5, unit="fiveMin")
             rsi = calculateRSI(coin_pair=i, period=14, unit="thirtyMin")
-            print("{}: \tBreakout: {} \tRSI: {}".format(i, breakout, rsi))
-        time.sleep(300)
+            if (rsi >= 70.0 or rsi <= 30):
+                print("{}: \tBreakout: {} \tRSI: {}".format(i, breakout, rsi))
+                unirest.post("https://coinwatch-demo.herokuapp.com/alert", params={
+                    "type": "RSI",
+                    "value": rsi,
+                    "pair": i,
+                }, callback=webhookCallback)
+            else:
+                print("No Webhook")
+        time.sleep(1)
         loop_script()
     loop_script()
