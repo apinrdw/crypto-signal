@@ -157,9 +157,20 @@ def webhookCallback(response):
 def loop_script():
     for i in coin_pairs:
         breakout = findBreakout(coin_pair=i, period=5, unit="fiveMin")
+        sma = calculateSMA(coin_pair=i, period=5, unit="fiveMin")
+        ema = calculateEMA(coin_pair=i, period=5, unit="fiveMin")
         rsi = calculateRSI(coin_pair=i, period=14, unit="thirtyMin")
-        print("{}: \tBreakout: {} \tRSI: {}".format(i, breakout, rsi))
+        baseLine = calculateBaseLine(coin_pair=i, unit="day")
+        conversionLine = calculateConversionLine(coin_pair=i, unit="day")
+        leadSpanA = calculateLeadingSpanA(coin_pair=i, unit="day")
+        leadSpanB = calculateLeadingSpanB(coin_pair=i, unit="day")
 
+        print("{} ======================".format(i))
+        print("Breakout: {}".format(breakout))
+        print("RSI: {}".format(rsi))
+        print("SMA: {}".format(sma))
+        print("EMA: {}".format(ema))
+        print("Ichimoku: BaseLine: {} ConversionLine: {} LeadSpanA: {} LeadSpanB: {}".format(baseLine, conversionLine, leadSpanA, leadSpanB))
         if (rsi >= 70.0 or rsi <= 30.0):
             unirest.post("https://coinwatch-demo.herokuapp.com/alert", params={
                 "type": "RSI",
