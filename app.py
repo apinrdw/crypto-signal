@@ -179,7 +179,7 @@ def loop_script():
             # }, callback=webhookCallback)
             print("PERFORM POST")
             type = "sell" if rsi >= 55.0 else "buy"
-            unirest.post(os.getenv("TRADE_POST_URL", params={
+            unirest.post(os.getenv("TRADE_POST_URL"), params={
                 "trade": {
                     "transaction_type": type,
                     "pair": i,
