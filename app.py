@@ -171,11 +171,19 @@ def loop_script():
         print("SMA: {}".format(sma))
         print("EMA: {}".format(ema))
         print("Ichimoku: BaseLine: {} ConversionLine: {} LeadSpanA: {} LeadSpanB: {}".format(baseLine, conversionLine, leadSpanA, leadSpanB))
-        if (rsi >= 70.0 or rsi <= 30.0):
-            unirest.post("https://coinwatch-demo.herokuapp.com/alert", params={
-                "type": "RSI",
-                "value": rsi,
-                "pair": i,
-            }, callback=webhookCallback)
+        if (rsi >= 55.0 or rsi <= 45.0):
+            # unirest.post("https://coinwatch-demo.herokuapp.com/alert", params={
+            #     "type": "RSI",
+            #     "value": rsi,
+            #     "pair": i,
+            # }, callback=webhookCallback)
+            print("PERFORM POST")
+            type = "sell" if rsi >= 55.0 else "buy"
+            unirest.post(os.getenv("TRADE_POST_URL", params={
+                "trade": {
+                    "transaction_type": type,
+                    "pair": i,
+                }
+            }, auth=(os.getenv("USER_EMAIL"), os.getenv("USER_PASSWORD")))
         else:
             print("No Webhook")
