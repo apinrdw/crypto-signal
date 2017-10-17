@@ -136,6 +136,16 @@ class Bittrex(object):
         
         return historicalData['result'][-period:]
 
+    def getRangeHistoricalData(self, market, period_from, period_to, unit):
+        if (period_from == 0):
+            return self.getHistoricalData(market, period_to, unit)
+        request_url = 'https://bittrex.com/Api/v2.0/pub/market/GetTicks?marketName=%s&tickInterval=%s' % (market, unit)
+        historicalData = requests.get(request_url,
+            headers={"apisign": hmac.new(self.api_secret.encode(), request_url.encode(), hashlib.sha512).hexdigest()}
+        ).json()
+        
+        return historicalData['result'][-period_to:-period_from]
+
     def get_markets(self):
         """
         Used to get the open and available trading markets

@@ -40,6 +40,13 @@ def getClosingPrices(coin_pair, period, unit):
         closing_prices.append(i['C'])
     return closing_prices
 
+def getRangeClosingPrices(coin_pair, period_from, period_to, unit):
+    historical_data = my_bittrex.getRangeHistoricalData(coin_pair, period_from, period_to, unit)
+    closing_prices = []
+    for i in historical_data:
+        closing_prices.append(i['C'])
+    return closing_prices
+
 def calculateSMA(coin_pair, period, unit):
     """
     Returns the Simple Moving Average for a coin pair
@@ -164,6 +171,8 @@ def loop_script():
         conversionLine = calculateConversionLine(coin_pair=i, unit="day")
         leadSpanA = calculateLeadingSpanA(coin_pair=i, unit="day")
         leadSpanB = calculateLeadingSpanB(coin_pair=i, unit="day")
+        closingPrices = getClosingPrices(coin_pair=i, period=14, unit='thirtyMin')
+        rangeClosingPrices = getRangeClosingPrices(coin_pair=i, period_from=1, period_to=14, unit='thirtyMin')
 
         print("{} ======================".format(i))
         print("Breakout: {}".format(breakout))
@@ -171,6 +180,8 @@ def loop_script():
         print("SMA: {}".format(sma))
         print("EMA: {}".format(ema))
         print("Ichimoku: BaseLine: {} ConversionLine: {} LeadSpanA: {} LeadSpanB: {}".format(baseLine, conversionLine, leadSpanA, leadSpanB))
+        print("Closing Price: {}".format(map(str, closingPrices)))
+        print("Closing Price: {}".format(map(str, rangeClosingPrices)))
         if (rsi >= 55.0 or rsi <= 45.0):
             # unirest.post("https://coinwatch-demo.herokuapp.com/alert", params={
             #     "type": "RSI",
