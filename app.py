@@ -190,11 +190,16 @@ def loop_script():
             # }, callback=webhookCallback)
             print("PERFORM POST")
             type = "sell" if rsi >= 55.0 else "buy"
+            current_price = my_bittrex.get_ticker(i)
             unirest.post(os.getenv("TRADE_POST_URL"), params={
                 "trade": {
                     "transaction_type": type,
                     "pair": i,
                     "amount_ratio": 0.1,
+                    "current_price": {
+                        "bid": current_price['result']['Bid'],
+                        "ask": current_price['result']['Ask']
+                    },
                     "comment": "Sample Text"
                 }
             }, auth=(os.getenv("USER_EMAIL"), os.getenv("USER_PASSWORD")))
