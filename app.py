@@ -194,6 +194,7 @@ def loop_script():
                 "trade": {
                     "transaction_type": type,
                     "pair": i,
+                    "amount_ratio": 0.1,
                     "comment": "Sample Text"
                 }
             }, auth=(os.getenv("USER_EMAIL"), os.getenv("USER_PASSWORD")))
