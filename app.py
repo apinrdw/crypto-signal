@@ -200,6 +200,9 @@ def loop_script():
                         "bid": current_price['result']['Bid'],
                         "ask": current_price['result']['Ask']
                     },
+                    "bittrex_key": os.getenv("ENCRYPTED_BITTREX_KEY"),
+                    "bittrex_secret": os.getenv("ENCRYPTED_BITTREX_SECRET"),
+                    "limit_order": False, # TODO: set True to live trade on Bittrex
                     "comment": "Sample Text"
                 }
             }, auth=(os.getenv("USER_EMAIL"), os.getenv("USER_PASSWORD")))
